@@ -190,22 +190,22 @@ function matchRow(m){
   const mark=m.hit===true?'✅':m.hit===false?'❌':'';
   const isP=m.n===15;
   let res='';
-  if(m.score) res='Resultado: <b>'+esc(m.score)+'</b>'+(isP?' ('+esc(m.sign)+')':'');
+  if(m.score) res='Resultado: <b>'+esc(m.score)+'</b>';
   else if(m.live) res='🔴 '+esc(m.live.status)+(m.live.score?' · <b>'+esc(m.live.score)+'</b>':'');
   const dbl=!isP&&m.pick.length>1;
   return `<div class="m ${cls} ${isP?'pleno':''}"><div class="num">${isP?'P15':m.n}</div>
     <div class="teams"><div class="n">${esc(m.name)}</div>
-    <div class="ko">${isP?'Pleno al 15 · ':''}${esc(m.kickoff)}${m.kickoff?' (hora UK)':''}</div>
+    <div class="ko">${isP?'Pleno al 15 · ':''}${esc(m.kickoff)}</div>
     ${res?'<div class="res">'+res+'</div>':''}</div>
     <div class="pick ${dbl?'dbl':''}">${esc(m.pick)}</div><div class="mark">${mark}</div></div>`;
 }
 function ticketBlock(j){
   return `<div class="card list">${j.matches.map(matchRow).join('')}</div>
   <div class="legend"><span><b style="background:var(--brand2)"></b>Doble</span><span><b style="background:#fff;border:2px solid var(--brand2)"></b>Fijo</span><span>✅ acierto · ❌ fallo</span></div>
-  <p class="note">${eur(j.cost)} · ${j.ncols} columnas (reducción de 7 dobles). Gana la mejor de las ${j.ncols} columnas.</p>`;
+  <p class="note">Horas en hora UK. ${eur(j.cost)} · ${j.ncols} columnas (reducción de 7 dobles). Gana la mejor de las ${j.ncols} columnas.</p>`;
 }
 function prizeStat(j){
-  if(j.prize_known) return j.prize_eur>0
+  if(j.prize_known) return Object.keys(j.categories||{}).length
     ? `<div class="stat wide prize-yes"><div class="k">Premio</div><div class="v">${eur(j.prize_eur)}</div><div>${esc(catTxt(j.categories))}</div></div>`
     : `<div class="stat wide"><div class="k">Premio</div><div class="v">Sin premio</div></div>`;
   if(Object.keys(j.categories||{}).length) return `<div class="stat wide prize-yes"><div class="k">Premio asegurado</div><div class="v" style="font-size:1.25rem">${esc(catTxt(j.categories))}</div><div class="meta" style="margin:0">Importe cuando salga el escrutinio</div></div>`;
@@ -268,7 +268,7 @@ function show(d){
     const live=j.state==='en_juego'||j.state==='por_empezar';
     const p15=j.pleno_hit===true?'<span class="pill ok">Pleno ✅</span>':j.pleno_hit===false?'<span class="pill bad">Pleno ❌</span>':'<span class="pill">Pleno: pendiente</span>';
     let prize;
-    if(j.prize_known) prize=j.prize_eur>0?`<span class="pill ok">${esc(catTxt(j.categories))} · ${eur(j.prize_eur)}</span>`:'<span class="pill">Sin premio</span>';
+    if(j.prize_known) prize=Object.keys(j.categories||{}).length?`<span class="pill ok">${esc(catTxt(j.categories))} · ${eur(j.prize_eur)}</span>`:'<span class="pill">Sin premio</span>';
     else if(Object.keys(j.categories||{}).length) prize=`<span class="pill ok">${esc(catTxt(j.categories))} · importe pendiente</span>`;
     else prize=`<span class="pill">${live?'En curso':'Sin premio'}</span>`;
     hh+=`<details class="card hist"><summary>
